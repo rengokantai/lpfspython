@@ -143,3 +143,39 @@ recreate key the key file but without the pass phrase
 openssl rsa -in ssl.key -out ke.key
 openssl req -x509 -days 730 -in ssl.csr -signkey ke.key -out ke.crt
 ```
+#####cp5 source control
+create a deploy key. On production server:
+```
+ssh-keygen -t rsa -b 2048
+```
+name
+```
+./deploy_key
+```
+upload github, do not allow write access.Then install git
+```
+apt-get install git-core
+```
+using ssh-agent to clone repo:
+```
+ssh-agent bash -c 'ssh-add /..../deploy.key;git clone git@github.com:pj/git
+```
+update by pulling code:
+```
+ssh-agent bash -c 'ssh-add /..../deploy.key;git pull origin master
+```
+#####cp6 database
+```
+sudo apt-get install postgresql libpq-dev postgresql-client-common postgresql-client redis-server
+```
+setup
+```
+sudo su - postgres
+createdb ke
+createuser --superuser deployer
+```
+then
+```
+psql
+ALTER ROLE deployer  WITH PASSWORD 'pass';
+```
